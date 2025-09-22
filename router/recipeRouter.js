@@ -1,5 +1,6 @@
 const recipeRouter = require('express').Router();
 const recipeModel = require('../models/recipeModel');
+const upload = require('../middleware/uploads')
 
 //GET avec recherche et filtres
 recipeRouter.get("/recipes", async (req, res) => {
@@ -42,13 +43,21 @@ recipeRouter.get("/recipes/:id", async (req, res) => {
 });
 
 //POST
-recipeRouter.post("/recipes", async (req, res) => {
+//POST avec upload d'image
+recipeRouter.post("/recipes", upload.single('image'), async (req, res) => {
     try {
-        const newRecipe = new recipeModel(req.body);
+        const recipeData = req.body;
+        if (req.file) {
+            recipeData.image = req.file.filename;
+        }
+        const newRecipe = new recipeModel(recipeData);
         await newRecipe.save()
-        res.send("La recette a été ajoutée avec succès")
+        res.status(201).json({ message: "La recette a été ajoutée avec succès", recipe: newRecipe });
     } catch (error) {
-        res.send(error)
+        if (req.multerError) {
+            return res.status(400).json({ error: "Format d'image non supporté" });
+        }
+        res.status(400).json({ error: error.message });
     }
 })
 
