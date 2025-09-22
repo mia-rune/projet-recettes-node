@@ -42,7 +42,6 @@ recipeRouter.get("/recipes/:id", async (req, res) => {
     }
 });
 
-//POST
 //POST avec upload d'image
 recipeRouter.post("/recipes", upload.single('image'), async (req, res) => {
     try {

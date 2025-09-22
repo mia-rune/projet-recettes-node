@@ -49,7 +49,14 @@ const recipeSchema = mongoose.Schema({
             message: "La catégorie doit être : entrée, plat principal ou dessert"
         }
     },
+
+    image: {
+        type: String,
+        required: false
+    }
+}, {
+    timestamps: true
 });
 
 const recipeModel = mongoose.model("recipes", recipeSchema);
-module.exports = recipeModel
+module.exports = recipeModel;
